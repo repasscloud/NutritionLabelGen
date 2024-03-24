@@ -11,7 +11,7 @@ class Program
         const string heavyFontPath = "./Fonts/Roboto-Bold.ttf";
         const string regularFontPath = "./Fonts/Roboto-Regular.ttf";
 
-        const int canvasWidth = 400;
+        const int canvasWidth = 300;
         const int canvasHeight = 600;
 
         // load the fonts
@@ -29,12 +29,44 @@ class Program
 
         SKPaint fontServingsInfo = new SKPaint
         {
+            Typeface = typefaceRegular,
+            TextSize = 16,
+            IsAntialias = true,
+            Color = SKColors.Black,
+        };
+
+        SKPaint fontAmtPerServing = new SKPaint
+        {
             Typeface = typefaceHeavy,
-            TextSize = 24,
+            TextSize = 13,
+            IsAntialias = true,
+            Color = SKColors.Black,
+        };
+
+        SKPaint fontCaloriesHeavy = new SKPaint
+        {
+            Typeface = typefaceHeavy,
+            TextSize = 15,
             IsAntialias = true,
             Color = SKColors.Black,
         };
         
+        SKPaint fontCaloriesRegular = new SKPaint
+        {
+            Typeface = typefaceRegular,
+            TextSize = 15,
+            IsAntialias = true,
+            Color = SKColors.Black,
+        };
+
+        SKPaint fontNotes = new SKPaint
+        {
+            Typeface = typefaceRegular,
+            TextSize = 11,
+            IsAntialias = true,
+            Color = SKColors.Black,
+        };
+
         // create border line
         var borderPaint = new SKPaint
         {
@@ -50,6 +82,31 @@ class Program
             (float)canvasHeight - borderPaint.StrokeWidth / 2
         );
 
+        // thick line
+        var thicklinePaint = new SKPaint
+        {
+            Style = SKPaintStyle.Stroke,
+            Color = SKColors.Black,
+            StrokeWidth = 7,
+        };
+        SKRect thicklineRect = new SKRect(10, 90, canvasWidth - 10, 97); // startX, startY, endX, endY
+
+        // medium line
+        var mediumLinePaint = new SKPaint
+        {
+            Style = SKPaintStyle.Stroke,
+            Color = SKColors.Black,
+            StrokeWidth = 3,
+        };
+
+        // thin line
+        var thinlinePaint = new SKPaint
+        {
+            Style = SKPaintStyle.Stroke,
+            Color = SKColors.Black,
+            StrokeWidth = 0.5F,
+        };
+
         // Set up the image size
         using (var surface = SKSurface.Create(new SKImageInfo(canvasWidth, canvasHeight)))
         {
@@ -62,31 +119,55 @@ class Program
             // add heading to canvas
             canvas.DrawText("Nutrition Facts", 10, 35, fontTitle);
 
-            // // draw paint for the black line (recatange)
-            // var linePaint = new SKPaint
-            // {
-            //     Style = SKPaintStyle.Stroke,
-            //     Color = SKColors.Black,
-            //     StrokeWidth = 4,
-            // };
+            // add serving info
+            canvas.DrawText("Serving Size 1 cup (228g)", 10, 60, fontServingsInfo);
+            canvas.DrawText("Servings Per Container 2", 10, 78, fontServingsInfo);
 
-            // // draw a black line across the image, by drawing a thin rectangle
-            // SKRect lineRect = new SKRect(10, 150, 390, 154); // startX, startY, endX, endY
-            // canvas.DrawRect(lineRect, linePaint);
+            // thick line
+            canvas.DrawRect(thicklineRect, thicklinePaint);
 
-            // var thinLinePaint = new SKPaint
-            // {
-            //     Style = SKPaintStyle.Stroke,
-            //     Color = SKColors.Black,
-            //     StrokeWidth = 2,
-            // };
+            // amount per serving text
+            canvas.DrawText("Amount Per Serving", 10, 118, fontAmtPerServing);
+            SKRect thinLine01 = new SKRect(10, 124, canvasWidth - 10, 124.5F);
+            canvas.DrawRect(thinLine01, thinlinePaint);
 
-            // float startX = 10;
-            // float startY = 200;
-            // float endX = 390;
-            // float endY = 200;
+            // calories
+            canvas.DrawText("Calories", 10, 140, fontCaloriesHeavy);
+            canvas.DrawText("260", 70, 140, fontCaloriesRegular);
 
-            // canvas.DrawLine(startX, startY, endX, endY, thinLinePaint);
+            // calories from fat (right-aligned)
+            string caloriesFromFat = "Calories from Fat 120";
+            using (var rightText = new SKPaint())
+            {
+                rightText.TextSize = fontCaloriesRegular.TextSize;
+                rightText.IsAntialias = true;
+                rightText.Color = SKColors.Black;
+
+                float textWidth = rightText.MeasureText(caloriesFromFat);
+
+                float x = canvasWidth - textWidth - 10;
+                float y = 140;
+
+                canvas.DrawText(caloriesFromFat, x, y, rightText);
+            }
+
+            SKRect belowCaloriesLine = new SKRect(10, 146, canvasWidth - 10, 146 + mediumLinePaint.StrokeWidth); // startX, startY, endX, endY
+            canvas.DrawRect(belowCaloriesLine, mediumLinePaint);
+
+            // % Daily Value* text
+            string textDailyValuePercent = "% Daily Value*";
+            using (var rightText = new SKPaint())
+            {
+                rightText.TextSize = fontNotes.TextSize;
+                rightText.IsAntialias = true;
+                rightText.Color = SKColors.Black;
+                float textWidth = rightText.MeasureText(textDailyValuePercent);
+                float x = canvasWidth - textWidth - 10;
+                float y = 163;
+                canvas.DrawText(textDailyValuePercent, x, y, rightText);
+            }
+            SKRect belowDailyValuePercentLine = new SKRect(10, 170, canvasWidth - 10, 170 + thinlinePaint.StrokeWidth);
+            canvas.DrawRect(belowDailyValuePercentLine, thinlinePaint);            
 
             // Save the image
             using (var image = surface.Snapshot())
@@ -98,10 +179,13 @@ class Program
         }
         
         // dispose of elements
-        fontTitle.Dispose();
         borderPaint.Dispose();
+        fontTitle.Dispose();
         fontServingsInfo.Dispose();
-
+        fontAmtPerServing.Dispose();
+        fontCaloriesHeavy.Dispose();
+        fontCaloriesRegular.Dispose();
+        
         Console.WriteLine($"Nutrition label generated at {outputPath}");
     }
 }

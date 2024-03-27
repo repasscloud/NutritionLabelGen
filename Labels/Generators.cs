@@ -194,7 +194,7 @@ public static class Builder
                     }
 
                     // thin line 01
-                    SKRect thinLine01 = new SKRect(10, 194, cWidth - 10, 194 + thinlinePaint.StrokeWidth);
+                    SKRect thinLine01 = new SKRect(10, 196, cWidth - 10, 196 + thinlinePaint.StrokeWidth);
                     canvas.DrawRect(thinLine01, thinlinePaint);
 
                     // total fat text (static)
@@ -216,6 +216,12 @@ public static class Builder
                     canvas.DrawText($"   Saturated Fat {saturatedFat}", 10, 234, msrPerServingFont);
                     float saturdatedFatX = amtPerServingFont.MeasureText($"13%");
                     canvas.DrawText("13%", cWidth - saturdatedFatX - 10, 234, amtPerServingFont);
+
+                    // thin line 03
+                    SKRect thinLine03 = new SKRect(10, 240, cWidth - 10, 240 + thinlinePaint.StrokeWidth);
+                    canvas.DrawRect(thinLine03, thinlinePaint);
+                    
+                    
 
                     // Save the image
                     using (var image = surface.Snapshot())
